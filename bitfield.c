@@ -51,12 +51,22 @@ void bitfield_init(bitfield_t * bf, const int nbits)
 //    bf->bits = realloc(bf->bits, sizeof(uint32_t) * nbits);
 }
 
+void bitfield_release(bitfield_t* bf)
+{
+    free(bf->bits);
+}
+
 /**
  * Mark bit as on. */
 void bitfield_mark(bitfield_t * bf, const int bit)
 {
     int cint;
 
+    if (!bf->bits)
+    {
+        int * p = (int*)0x12345678;
+        *p = 0;
+    }
     assert(bf->bits);
     assert(0 <= bit);
     assert(bit < bf->size);
