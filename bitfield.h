@@ -9,6 +9,8 @@ typedef struct
 
 void bitfield_init(bitfield_t * bf, const int nbits);
 
+void bitfield_clone(bitfield_t * bf, bitfield_t * clone);
+
 void bitfield_release(bitfield_t* bf);
 
 void bitfield_mark(bitfield_t * bf, const int bit);

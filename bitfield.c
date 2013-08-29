@@ -45,11 +45,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * @param nbits: size of bitfield */
 void bitfield_init(bitfield_t * bf, const int nbits)
 {
-    assert(0 <= nbits);
+    assert(0 < nbits);
     bf->size = nbits;
     bf->bits = calloc(bf->size, sizeof(uint32_t));
-//    bf->bits = realloc(bf->bits, sizeof(uint32_t) * nbits);
     assert(bf->bits);
+}
+
+void bitfield_clone(bitfield_t * bf, bitfield_t * clone)
+{
+    clone->size = bf->size;
+    clone->bits = calloc(bf->size, sizeof(uint32_t));
+    memcpy(clone->bits, bf->bits, sizeof(uint32_t) * bf->size);
 }
 
 void bitfield_release(bitfield_t* bf)
