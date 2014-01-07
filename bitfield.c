@@ -43,97 +43,96 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * Initialise a bitfield of nbits length
  * @param nbits: size of bitfield */
-void bitfield_init(bitfield_t * bf, const int nbits)
+void bitfield_init(bitfield_t * me, const int nbits)
 {
-    assert(0 < nbits);
-    bf->size = nbits;
-    bf->bits = calloc(bf->size, sizeof(uint32_t));
-    assert(bf->bits);
+    //assert(0 < nbits);
+    me->size = nbits;
+    me->bits = calloc(me->size, sizeof(uint32_t));
+    assert(me->bits);
 }
 
-void bitfield_clone(bitfield_t * bf, bitfield_t * clone)
+void bitfield_clone(bitfield_t * me, bitfield_t * clone)
 {
-    clone->size = bf->size;
-    clone->bits = calloc(bf->size, sizeof(uint32_t));
-    memcpy(clone->bits, bf->bits, sizeof(uint32_t) * bf->size);
+    clone->size = me->size;
+    clone->bits = calloc(me->size, sizeof(uint32_t));
+    memcpy(clone->bits, me->bits, sizeof(uint32_t) * me->size);
 }
 
-void bitfield_release(bitfield_t* bf)
+void bitfield_release(bitfield_t* me)
 {
-    free(bf->bits);
+    free(me->bits);
 }
 
 /**
  * Mark bit as on. */
-void bitfield_mark(bitfield_t * bf, const int bit)
+void bitfield_mark(bitfield_t * me, const int bit)
 {
     int cint;
 
-    assert(bf->bits);
+    assert(me->bits);
     assert(0 <= bit);
-    assert(bit < bf->size);
+    assert(bit < me->size);
 
     cint = bit / 32;
-    bf->bits[cint] |= 1 << (31 - bit % 32);
+    me->bits[cint] |= 1 << (31 - bit % 32);
 }
 
 /**
  * Mark bit as off.*/
-void bitfield_unmark(bitfield_t * bf, const int bit)
+void bitfield_unmark(bitfield_t * me, const int bit)
 {
     int cint;
 
-    assert(bf->bits);
+    assert(me->bits);
     assert(0 <= bit);
-    assert(bit < bf->size);
+    assert(bit < me->size);
 
     cint = bit / 32;
-    bf->bits[cint] &= ~(1 << (31 - bit % 32));
+    me->bits[cint] &= ~(1 << (31 - bit % 32));
 }
 
 /**
  * Check if a certain bet is marked as on.
  * TODO need to remove 32 bit centeredness from this function
  */
-int bitfield_is_marked(bitfield_t * bf, const int bit)
+int bitfield_is_marked(bitfield_t * me, const int bit)
 {
-    assert(bf->bits);
+    assert(me->bits);
     assert(0 <= bit);
-    if (!(bit < bf->size))
+    if (!(bit < me->size))
     {
         int * p = (int*)0x12345678;
         *p = 0;
     }
-    assert(bit < bf->size);
+    assert(bit < me->size);
 
     int cint;
 
     cint = bit / 32;
-    return 0 != (bf->bits[cint] & (1 << (31 - bit % 32)));
+    return 0 != (me->bits[cint] & (1 << (31 - bit % 32)));
 }
 
-int bitfield_get_length(bitfield_t * bf)
+int bitfield_get_length(bitfield_t * me)
 {
-    return bf->size;
+    return me->size;
 }
 
 /**
  * Output bitfield to new string
  * @return string representation of the bitfield (string is null terminated)
  */
-char *bitfield_str(bitfield_t * bf)
+char *bitfield_str(bitfield_t * me)
 {
     char *str;
-
     int ii;
 
-    str = malloc(bf->size + 1);
+    str = malloc(me->size + 1);
 
-    for (ii = 0; ii < bf->size; ii++)
+    for (ii = 0; ii < me->size; ii++)
     {
-        str[ii] = bitfield_is_marked(bf, ii) ? '1' : '0';
+        str[ii] = bitfield_is_marked(me, ii) ? '1' : '0';
     }
 
-    str[bf->size] = '\0';
+    str[me->size] = '\0';
     return str;
 }
