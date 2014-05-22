@@ -40,9 +40,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "bitfield.h"
 
-/**
- * Initialise a bitfield of nbits length
- * @param nbits: size of bitfield */
 void bitfield_init(bitfield_t * me, const int nbits)
 {
     //assert(0 < nbits);
@@ -63,8 +60,6 @@ void bitfield_release(bitfield_t* me)
     free(me->bits);
 }
 
-/**
- * Mark bit as on. */
 void bitfield_mark(bitfield_t * me, const int bit)
 {
     int cint;
@@ -77,8 +72,6 @@ void bitfield_mark(bitfield_t * me, const int bit)
     me->bits[cint] |= 1 << (31 - bit % 32);
 }
 
-/**
- * Mark bit as off.*/
 void bitfield_unmark(bitfield_t * me, const int bit)
 {
     int cint;
@@ -91,10 +84,8 @@ void bitfield_unmark(bitfield_t * me, const int bit)
     me->bits[cint] &= ~(1 << (31 - bit % 32));
 }
 
-/**
- * Check if a certain bet is marked as on.
- * TODO need to remove 32 bit centeredness from this function
- */
+
+// TODO need to remove 32 bit centeredness from this function
 int bitfield_is_marked(bitfield_t * me, const int bit)
 {
     assert(me->bits);
@@ -117,10 +108,6 @@ int bitfield_get_length(bitfield_t * me)
     return me->size;
 }
 
-/**
- * Output bitfield to new string
- * @return string representation of the bitfield (string is null terminated)
- */
 char *bitfield_str(bitfield_t * me)
 {
     char *str;
