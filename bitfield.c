@@ -34,8 +34,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "bitfield.h"
 
-//#define INT_BITS (sizeof(int) / sizeof(char))
-
 unsigned int __bytes_required_for_bits(unsigned int bits)
 {
     return (0 < (bits % 8) ? 1 : 0) + (bits / 8);
