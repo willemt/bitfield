@@ -1,11 +1,5 @@
-/**
- * @file
- * @brief A data structure which manages the (un)marking of bitfields
- * @author  Willem Thiart himself@willemthiart.com
- * @version 0.1
- *
- * @section LICENSE
- * Copyright (c) 2011, Willem-Hendrik Thiart
+/*
+Copyright (c) 2011, Willem-Hendrik Thiart
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,7 +23,7 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+*/
 
 #include <assert.h>
 #include <stdlib.h>
@@ -40,19 +34,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "bitfield.h"
 
-void bitfield_init(bitfield_t * me, const int nbits)
+//#define INT_BITS (sizeof(int) / sizeof(char))
+
+unsigned int __bytes_required_for_bits(unsigned int bits)
+{
+    return (0 < (bits % 8) ? 1 : 0) + (bits / 8);
+}
+
+void bitfield_init(bitfield_t * me, const unsigned int nbits)
 {
     //assert(0 < nbits);
     me->size = nbits;
-    me->bits = calloc(me->size, sizeof(uint32_t));
+    me->bits = calloc(1, __bytes_required_for_bits(nbits));
     assert(me->bits);
 }
 
 void bitfield_clone(bitfield_t * me, bitfield_t * clone)
 {
     clone->size = me->size;
-    clone->bits = calloc(me->size, sizeof(uint32_t));
-    memcpy(clone->bits, me->bits, sizeof(uint32_t) * me->size);
+    clone->bits = calloc(1, __bytes_required_for_bits(me->size));
+    memcpy(clone->bits, me->bits, __bytes_required_for_bits(me->size));
 }
 
 void bitfield_release(bitfield_t* me)
@@ -60,50 +61,42 @@ void bitfield_release(bitfield_t* me)
     free(me->bits);
 }
 
-void bitfield_mark(bitfield_t * me, const int bit)
+void bitfield_mark(bitfield_t * me, const unsigned int bit)
 {
-    int cint;
+    unsigned int cint;
 
     assert(me->bits);
     assert(0 <= bit);
     assert(bit < me->size);
 
-    cint = bit / 32;
-    me->bits[cint] |= 1 << (31 - bit % 32);
+    cint = bit / 8;
+    me->bits[cint] |= 1 << (8 - 1 - bit % 8);
 }
 
-void bitfield_unmark(bitfield_t * me, const int bit)
+void bitfield_unmark(bitfield_t * me, const unsigned int bit)
 {
-    int cint;
+    unsigned int cint;
 
     assert(me->bits);
     assert(0 <= bit);
     assert(bit < me->size);
 
-    cint = bit / 32;
-    me->bits[cint] &= ~(1 << (31 - bit % 32));
+    cint = bit / 8;
+    me->bits[cint] &= ~(1 << (8 - 1 - bit % 8));
 }
 
-
-// TODO need to remove 32 bit centeredness from this function
-int bitfield_is_marked(bitfield_t * me, const int bit)
+int bitfield_is_marked(bitfield_t * me, const unsigned int bit)
 {
     assert(me->bits);
-    assert(0 <= bit);
-    if (!(bit < me->size))
-    {
-        int * p = (int*)0x12345678;
-        *p = 0;
-    }
     assert(bit < me->size);
 
-    int cint;
+    unsigned int cint;
 
-    cint = bit / 32;
-    return 0 != (me->bits[cint] & (1 << (31 - bit % 32)));
+    cint = bit / 8;
+    return 0 != (me->bits[cint] & (1 << (8 - 1 - bit % 8)));
 }
 
-int bitfield_get_length(bitfield_t * me)
+unsigned int bitfield_get_length(bitfield_t * me)
 {
     return me->size;
 }
@@ -111,14 +104,12 @@ int bitfield_get_length(bitfield_t * me)
 char *bitfield_str(bitfield_t * me)
 {
     char *str;
-    int ii;
+    unsigned int i;
 
     str = malloc(me->size + 1);
 
-    for (ii = 0; ii < me->size; ii++)
-    {
-        str[ii] = bitfield_is_marked(me, ii) ? '1' : '0';
-    }
+    for (i = 0; i < me->size; i++)
+        str[i] = bitfield_is_marked(me, i) ? '1' : '0';
 
     str[me->size] = '\0';
     return str;
