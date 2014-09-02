@@ -41,7 +41,7 @@ unsigned int __bytes_required_for_bits(unsigned int bits)
 
 void bitfield_init(bitfield_t * me, const unsigned int nbits)
 {
-    //assert(0 < nbits);
+    /* assert(0 < nbits); */
     me->size = nbits;
     me->bits = calloc(1, __bytes_required_for_bits(nbits));
     assert(me->bits);
@@ -72,7 +72,6 @@ void bitfield_mark(bitfield_t * me, const unsigned int bit)
     unsigned int cint;
 
     assert(me->bits);
-    assert(0u <= bit);
     assert(bit < me->size);
 
     cint = bit / 8u;
@@ -84,7 +83,6 @@ void bitfield_unmark(bitfield_t * me, const unsigned int bit)
     unsigned int cint;
 
     assert(me->bits);
-    assert(0u <= bit);
     assert(bit < me->size);
 
     cint = bit / 8u;
@@ -93,10 +91,10 @@ void bitfield_unmark(bitfield_t * me, const unsigned int bit)
 
 int bitfield_is_marked(bitfield_t * me, const unsigned int bit)
 {
+    unsigned int cint;
+
     assert(me->bits);
     assert(bit < me->size);
-
-    unsigned int cint;
 
     cint = bit / 8u;
     return 0u != (me->bits[cint] & (1u << (8u - 1u - bit % 8u)));
