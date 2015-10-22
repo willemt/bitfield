@@ -63,8 +63,8 @@ void bitfield_clone(bitfield_t * me, bitfield_t * clone)
 
 void bitfield_free(bitfield_t* me)
 {
-    free(me);
     free(me->bits);
+    free(me);
 }
 
 void bitfield_mark(bitfield_t * me, const unsigned int bit)
